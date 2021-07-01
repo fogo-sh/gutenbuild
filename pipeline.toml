@@ -1,0 +1,5 @@
+[modules]
+to_html = { path = "./plugins/target/wasm32-wasi/debug/to_html.wasm" }
+
+[build]
+order = [ "to_html" ]
