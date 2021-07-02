@@ -5,3 +5,4 @@ authors = ["Mitchell Hynes <me@mitchellhynes.com>"]
 edition = "2018"
 
 [dependencies]
+pulldown-cmark = "0.8.0"

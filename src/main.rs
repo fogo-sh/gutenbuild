@@ -8,36 +8,46 @@ mod runtime;
 use runtime::run_module;
 
 #[derive(Serialize, Deserialize)]
-pub struct Stage<'a> {
+pub struct StageModule<'a> {
     path: &'a str,
 }
 
-type ModuleDirectory<'a> = HashMap<&'a str, Stage<'a>>;
+type ModuleDirectory<'a> = HashMap<&'a str, StageModule<'a>>;
+#[derive(Serialize, Deserialize)]
 
-type Order<'a> = Vec<&'a str>;
+struct Volume<'a> {
+    host: &'a str,
+    guest: &'a str,
+}
 
 #[derive(Serialize, Deserialize)]
-struct BuildDirectory<'a> {
+pub struct Stage<'a> {
+    module: &'a str,
+    volumes: Vec<Volume<'a>>,
+}
+
+#[derive(Serialize, Deserialize)]
+struct StageVec<'a> {
     #[serde(borrow)]
-    order: Order<'a>,
+    stage: Vec<Stage<'a>>,
 }
 
 #[derive(Serialize, Deserialize)]
 struct Pipeline<'a> {
     #[serde(borrow)]
     modules: ModuleDirectory<'a>,
-    build: BuildDirectory<'a>,
+    stages: StageVec<'a>,
 }
 
 fn main() -> Result<()> {
     let pipeline = fs::read_to_string("./pipeline.toml")?;
     let module_directory: Pipeline = toml::from_str(&pipeline)?;
-    for name in module_directory.build.order {
-        let stage = module_directory.modules.get(name).expect(&format!(
+    for stage in module_directory.stages.stage.iter() {
+        let module = module_directory.modules.get(stage.module).expect(&format!(
             "{} isn't a module. Please define it in the [modules] section.",
-            name
+            stage.module
         ));
-        run_module(stage)?;
+        run_module(&module, &stage)?;
     }
     Ok(())
 }

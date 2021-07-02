@@ -1,11 +1,12 @@
 use anyhow::Result;
+use std::fs::File;
 use std::path::Path;
 use wasmtime::*;
-use wasmtime_wasi::sync::WasiCtxBuilder;
+use wasmtime_wasi::sync::{Dir, WasiCtxBuilder};
 
-use crate::Stage;
+use crate::{Stage, StageModule};
 
-pub fn run_module(module: &Stage) -> Result<()> {
+pub fn run_module(module: &StageModule, stage: &Stage) -> Result<()> {
     if !Path::new(module.path).exists() {
         panic!("{} does not exist.", module.path)
     }
@@ -13,13 +14,12 @@ pub fn run_module(module: &Stage) -> Result<()> {
     let mut linker = Linker::new(&engine);
     wasmtime_wasi::add_to_linker(&mut linker, |s| s)?;
 
-    // Create a WASI context and put it in a Store; all instances in the store
-    // share this context. `WasiCtxBuilder` provides a number of ways to
-    // configure what the target program will have access to.
-    let wasi = WasiCtxBuilder::new()
-        .inherit_stdio()
-        .inherit_args()?
-        .build();
+    let mut builder = WasiCtxBuilder::new();
+    for volume in stage.volumes.iter() {
+        let preopen_dir = unsafe { Dir::from_std_file(File::open(volume.host)?) };
+        builder = builder.preopened_dir(preopen_dir, Path::new(volume.guest))?;
+    }
+    let wasi = builder.inherit_stdio().inherit_args()?.build();
     let mut store = Store::new(&engine, wasi);
 
     // Instantiate our module with the imports we've created, and run it.
