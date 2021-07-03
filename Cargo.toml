@@ -9,6 +9,16 @@ edition = "2018"
 [dependencies]
 serde = { version = "1.0", features = ["derive"] }
 toml = { version = "0.5.8", features = ["preserve_order"] }
+pulldown-cmark = "0.8.0"
 wasmtime-wasi = "0.28.0"
 wasmtime = "0.28.0"
 anyhow = "1.0.41"
+
+[[bin]]
+name = "execute_plugins"
+path = "src/main.rs"
+
+[[bin]]
+name = "to_html"
+path = "plugins/to_html/src/main.rs"
+

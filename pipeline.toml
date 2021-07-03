@@ -1,9 +1,14 @@
+output = "./public"
+
 [modules]
 to_html = { path = "./plugins/target/wasm32-wasi/debug/to_html.wasm" }
 
 [[stages.stage]]
 module = "to_html"
 [[stages.stage.volumes]]
-host = "./"
+host = "./posts/"
 guest = "./"
+[[stages.stage.volumes]]
+host = "./public"
+guest = "./.html_output/"
 
