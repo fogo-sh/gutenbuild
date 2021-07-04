@@ -46,20 +46,6 @@ fn read_all(current_dir: &PathBuf) -> Result<Vec<ReadFile>> {
     Ok(read_files)
 }
 
-fn to_html(files: &mut Vec<ReadFile>) -> Result<()> {
-    for mut file in files {
-        let mut options = Options::empty();
-        options.insert(Options::ENABLE_STRIKETHROUGH);
-        let parser = Parser::new_ext(&file.contents, options);
-        let mut html_output = String::new();
-        html::push_html(&mut html_output, parser);
-        file.path.set_extension("html");
-        file.path = replace_prefix(&file.path, "./", "./.html_output/")?;
-        file.contents = html_output;
-    }
-    Ok(())
-}
-
 fn main() -> Result<()> {
     let mut read_files = read_all(&PathBuf::from("./"))?;
     if !Path::new(".html_output").exists() {
