@@ -6,7 +6,7 @@ type Volume struct {
 }
 
 type Stage struct {
-	ModuleName string
+	ModuleName string `toml:"module"`
 	Volumes    []Volume
 }
 
