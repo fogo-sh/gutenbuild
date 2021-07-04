@@ -1,5 +1,5 @@
 [package]
-name = "to_html"
+name = "fill_templates"
 version = "0.1.0"
 authors = ["Mitchell Hynes <me@mitchellhynes.com>"]
 edition = "2018"

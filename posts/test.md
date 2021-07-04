@@ -6,6 +6,7 @@ slug = "hello"
 
 created_date = 2-7-2021
 last_created_date = 2-7-2021
+template = "blog_post"
 ---
 
 # h1
