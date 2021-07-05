@@ -1,8 +1,8 @@
 output = "./public"
 
 [modules]
-to_html = { path = "./plugins/target/wasm32-wasi/debug/to_html.wasm" }
-fill_templates = { path = "./plugins/target/wasm32-wasi/debug/fill_templates.wasm" }
+to_html = { path="./plugins/target/wasm32-wasi/debug/to_html.wasm" }
+fill_templates = { path="./plugins/target/wasm32-wasi/debug/fill_templates.wasm" }
 
 [[stages.stage]]
 module = "to_html"

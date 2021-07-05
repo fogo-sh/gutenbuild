@@ -56,15 +56,13 @@ fn to_html(files: &mut Vec<ReadFile>) -> Result<()> {
         file.path.set_extension("html");
         file.path = replace_prefix(&file.path, "./", "./.html_output/")?;
         file.contents = html_output;
+        println!("Wrote: {:?}", file.path);
     }
     Ok(())
 }
 
 fn main() -> Result<()> {
     let mut read_files = read_all(&PathBuf::from("./"))?;
-    if !Path::new(".html_output").exists() {
-        fs::create_dir_all(".html_output")?;
-    }
     to_html(&mut read_files)?;
     for file in read_files {
         file.write()?;
