@@ -1,16 +1,13 @@
 package main
 
 import (
-	"github.com/fogo-sh/gutenbuild/runtime"
-
-	"github.com/BurntSushi/toml"
-
+	"io/ioutil"
 	"os"
 
+	"github.com/BurntSushi/toml"
+	"github.com/fogo-sh/gutenbuild/runtime"
 	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
-
-	"io/ioutil"
 )
 
 func main() {
@@ -22,14 +19,16 @@ func main() {
 	pipeline_content_bytes, err := ioutil.ReadFile("./pipeline.toml")
 	if err != nil {
 		log.Error().Err(err).Msg("error reading pipeline.toml")
+		os.Exit(1)
 	}
 
 	pipeline_content := string(pipeline_content_bytes)
 
-	var pipeline runtime.Pipeline
+	pipeline := new(runtime.Pipeline)
 	_, err = toml.Decode(pipeline_content, &pipeline)
 	if err != nil {
 		log.Error().Err(err).Msg("error decoding pipeline.toml")
+		os.Exit(1)
 	}
 
 	pipeline.Run()
