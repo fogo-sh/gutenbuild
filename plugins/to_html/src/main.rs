@@ -18,11 +18,13 @@ struct ReadFile {
 
 impl ReadFile {
     fn write(&self) -> Result<()> {
-        let parent = &self.path.parent().unwrap();
-        if !Path::new(parent).exists() {
-            fs::create_dir_all(parent)?;
+        if self.path.is_dir() {
+            let parent = &self.path.parent().unwrap();
+            if !Path::new(parent).exists() {
+                fs::create_dir_all(parent)?;
+            }
+            fs::write(&self.path, &self.contents)?;
         }
-        fs::write(&self.path, &self.contents)?;
         Ok(())
     }
 }

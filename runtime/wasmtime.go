@@ -26,7 +26,7 @@ func (p *Pipeline) Run() error {
 	stderrPath := filepath.Join(dir, "stderr")
 
 	for _, stage := range p.Stages.Stage {
-		log.Print("processing %s", stage.ModuleName)
+		log.Print("processing ", stage.ModuleName)
 
 		stage_module := p.Modules[stage.ModuleName]
 		wasm_bytes, err := ioutil.ReadFile(stage_module.Path)
