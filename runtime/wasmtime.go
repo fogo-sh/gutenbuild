@@ -34,7 +34,7 @@ func (p *Pipeline) Run() error {
 			return fmt.Errorf("couldn't read module for %s: %w", stage.ModuleName, err)
 		}
 
-		log.Print(" %s", stage.ModuleName)
+		log.Print(stage.ModuleName)
 
 		module, err := wasmtime.NewModule(store.Engine, wasm_bytes)
 		if err != nil {
@@ -63,7 +63,7 @@ func (p *Pipeline) Run() error {
 		nom := instance.GetExport(store, "_start").Func()
 		_, err = nom.Call(store)
 		if err != nil {
-			return fmt.Errorf("couldn't run start module for %s: %w", stage.ModuleName, err)
+			return fmt.Errorf("%s: %w", stage.ModuleName, err)
 		}
 
 		stdout, err := ioutil.ReadFile(stdoutPath)

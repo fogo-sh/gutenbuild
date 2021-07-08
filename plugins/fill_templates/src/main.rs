@@ -25,6 +25,7 @@ struct Product<'a> {
 }
 
 fn main() -> Result<()> {
+    println!("hello");
     use tera::Context;
 
     let mut context = Context::new();
@@ -32,10 +33,7 @@ fn main() -> Result<()> {
         name: "hello",
     });
     context.insert("vat_rate", &0.20);
-    tera.render("products/product.html", &context)?;
-
-    // or a struct
-    tera.render("products/product.html", &Context::from_serialize(&product)?)?;
+    println!("{}", TEMPLATES.render("./templates/blog/base.html", &context)?);
 
     Ok(())
 }

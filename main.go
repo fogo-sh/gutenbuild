@@ -31,5 +31,9 @@ func main() {
 		os.Exit(1)
 	}
 
-	pipeline.Run()
+	err = pipeline.Run()
+	if err != nil {
+		log.Error().Err(err).Msg("Error running pipeline.")
+		os.Exit(1)
+	}
 }

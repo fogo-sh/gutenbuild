@@ -19,5 +19,8 @@ module = "fill_templates"
     host = "./site/posts/"
     guest = "./"
     [[stages.stage.volumes]]
+    host = "./site/templates/"
+    guest = "./templates/"
+    [[stages.stage.volumes]]
     host = "./site/public/"
     guest = "./.html_output/"
