@@ -199,6 +199,7 @@ dependencies = [
  "pulldown-cmark",
  "serde",
  "tera",
+ "toml",
  "utils",
 ]
 

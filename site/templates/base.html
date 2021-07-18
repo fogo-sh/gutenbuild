@@ -6,23 +6,22 @@
         <link rel="stylesheet" href="/index.css"/>
         <link rel="shortcut icon" type="image/ico" href="/favicon.ico"/>
         <meta name="viewport" content="width=device-width, initial-scale=1">
-        <title>{% block title %}{% endblock title %}</title>
+        <title>{% block title_head %}{{ blog.title }}{% endblock title_head %}</title>
         {% endblock head %}
     </head>
     <body>
         {% block header %}
         <header>
-            <div class="title">fogo.sh</div>
+            <div class="title">{% block title %}{{ blog.title }}{% endblock title %}</div>
             <div class="links">
-                <a href="/">go home</a> |
-                <a href="https://github.com/fogo-sh">github</a> -
+                <a href="/">Home</a> |
                 <a href="/blog/">blogposts</a>
             </div>
         </header>
         {% endblock header %}
         <main>
         {% block content %}
-        {{content_html | safe}}
+        {{ content_html | safe }}
         {% endblock content %}
         </main>
         {% block footer %}

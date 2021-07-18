@@ -68,12 +68,7 @@ func (p *Pipeline) Run() error {
 		log.Debug().Str("stage", "module:start").Str("module", stage.ModuleName).Send()
 
 		nom := instance.GetExport(store, "_start").Func()
-		_, err = nom.Call(store)
-		if err != nil {
-			return fmt.Errorf("%s: %w", stage.ModuleName, err)
-		}
-
-		log.Debug().Str("stage", "module:finished").Str("module", stage.ModuleName).Send()
+		_, module_error := nom.Call(store)
 
 		stdout, err := ioutil.ReadFile(stdoutPath)
 		if err != nil {
@@ -90,6 +85,13 @@ func (p *Pipeline) Run() error {
 		if len(stderr) != 0 {
 			log.Error().Str("stderr", string(stderr)).Str("module", stage.ModuleName).Send()
 		}
+
+		if module_error != nil {
+			return fmt.Errorf("%s: %w", stage.ModuleName, err)
+		}
+
+		log.Debug().Str("stage", "module:finished").Str("module", stage.ModuleName).Send()
+
 	}
 	return nil
 }

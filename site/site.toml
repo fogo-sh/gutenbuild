@@ -1,2 +1,4 @@
 [blog]
-title = "Hello world"
+title = "Gutenbuild Blog"
+templates = "templates/**/*"
+posts = "posts/**/*.md"
