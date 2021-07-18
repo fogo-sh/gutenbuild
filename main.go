@@ -1,6 +1,7 @@
 package main
 
 import (
+	"flag"
 	"io/ioutil"
 	"os"
 
@@ -12,7 +13,13 @@ import (
 
 func main() {
 	zerolog.TimeFieldFormat = zerolog.TimeFormatUnix
-	log.Logger = zerolog.New(os.Stdout)
+	should_pretty_logs := flag.Bool("pretty", false, "pretty print logs")
+	flag.Parse()
+	if *should_pretty_logs {
+		log.Logger = log.Output(zerolog.ConsoleWriter{Out: os.Stdout})
+	} else {
+		log.Logger = zerolog.New(os.Stdout)
+	}
 
 	log.Print("starting gutenbuild")
 

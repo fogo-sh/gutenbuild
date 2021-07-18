@@ -26,7 +26,7 @@ func (p *Pipeline) Run() error {
 	stderrPath := filepath.Join(dir, "stderr")
 
 	for _, stage := range p.Stages.Stage {
-		log.Print("processing ", stage.ModuleName)
+		log.Debug().Str("stage", "module:reading").Str("module", stage.ModuleName).Send()
 
 		stage_module := p.Modules[stage.ModuleName]
 		wasm_bytes, err := ioutil.ReadFile(stage_module.Path)
@@ -34,7 +34,7 @@ func (p *Pipeline) Run() error {
 			return fmt.Errorf("couldn't read module for %s: %w", stage.ModuleName, err)
 		}
 
-		log.Print(stage.ModuleName)
+		log.Debug().Str("stage", "module:linking").Str("module", stage.ModuleName).Send()
 
 		module, err := wasmtime.NewModule(store.Engine, wasm_bytes)
 		if err != nil {
@@ -47,10 +47,15 @@ func (p *Pipeline) Run() error {
 			return fmt.Errorf("couldn't compile module for %s: %w", stage.ModuleName, err)
 		}
 
+		log.Debug().Str("stage", "module:config").Str("module", stage.ModuleName).Send()
+
 		wasiConfig := wasmtime.NewWasiConfig()
 		wasiConfig.SetStdoutFile(stdoutPath)
 		wasiConfig.SetStderrFile(stderrPath)
 		for _, volume := range stage.Volumes {
+			if _, err := os.Stat(volume.Host); os.IsNotExist(err) {
+				return fmt.Errorf("host file not found for %s: %s", stage.ModuleName, volume.Host)
+			}
 			wasiConfig.PreopenDir(volume.Host, volume.Guest)
 		}
 
@@ -60,11 +65,15 @@ func (p *Pipeline) Run() error {
 			return fmt.Errorf("couldn't compile module for %s: %w", stage.ModuleName, err)
 		}
 
+		log.Debug().Str("stage", "module:start").Str("module", stage.ModuleName).Send()
+
 		nom := instance.GetExport(store, "_start").Func()
 		_, err = nom.Call(store)
 		if err != nil {
 			return fmt.Errorf("%s: %w", stage.ModuleName, err)
 		}
+
+		log.Debug().Str("stage", "module:finished").Str("module", stage.ModuleName).Send()
 
 		stdout, err := ioutil.ReadFile(stdoutPath)
 		if err != nil {
@@ -76,10 +85,10 @@ func (p *Pipeline) Run() error {
 		}
 
 		if len(stdout) != 0 {
-			log.Info().Str("stdout", string(stdout)).Msg(stage.ModuleName)
+			log.Info().Str("stdout", string(stdout)).Str("module", stage.ModuleName).Send()
 		}
 		if len(stderr) != 0 {
-			log.Error().Str("stderr", string(stderr)).Msg(stage.ModuleName)
+			log.Error().Str("stderr", string(stderr)).Str("module", stage.ModuleName).Send()
 		}
 	}
 	return nil

@@ -4,8 +4,8 @@ title = "asdf"
 tags = ["hello", "world"]
 slug = "hello"
 
-created_date = 2-7-2021
-last_created_date = 2-7-2021
+created_date = "2-7-2021"
+last_created_date = "2-7-2021"
 template = "blog_post"
 ---
 

@@ -1,16 +1,16 @@
 <!DOCTYPE html>
 <html lang="en-US">
     <head>
-        {% block head %}
+        
         <meta charset="utf-8">
         <link rel="stylesheet" href="/index.css"/>
         <link rel="shortcut icon" type="image/ico" href="/favicon.ico"/>
         <meta name="viewport" content="width=device-width, initial-scale=1">
-        <title>{% block title %}{% endblock title %}</title>
-        {% endblock head %}
+        <title></title>
+        
     </head>
     <body>
-        {% block header %}
+        
         <header>
             <div class="title">fogo.sh</div>
             <div class="links">
@@ -19,18 +19,20 @@
                 <a href="/blog/">blogposts</a>
             </div>
         </header>
-        {% endblock header %}
+        
         <main>
-        {% block content %}
-        {{content_html | safe}}
-        {% endblock content %}
+        
+        <h1>h1</h1>
+<h2>h2</h2>
+
+        
         </main>
-        {% block footer %}
+        
         <hr>
         <footer>
             <b>Copyright 2021 fogo.sh.</b> Any and all opinions listed here are our own and not representative of our employers; past, present, and future.
             Written in Rust 🦀 with 💖. <a href="https://github.com/fogo-sh/fogo.sh"> Clone the source.</a>
         </footer>
-        {% endblock footer %}
+        
     </body>
 </html>

@@ -1,39 +1,60 @@
-#[macro_use]
-extern crate lazy_static;
+use std::collections::HashMap;
 
-use serde::{Serialize, Deserialize};
 use anyhow::Result;
+use std::path::{Path, PathBuf, StripPrefixError};
+use tera::Context;
 use tera::Tera;
 
-lazy_static! {
-    pub static ref TEMPLATES: Tera = {
-        let mut tera = match Tera::new("examples/basic/templates/**/*") {
-            Ok(t) => t,
-            Err(e) => {
-                println!("Parsing error(s): {}", e);
-                ::std::process::exit(1);
-            }
-        };
-        tera.autoescape_on(vec!["html", ".sql"]);
-        tera
-    };
-}
+use utils::fs::read_all;
+use utils::parsing::{parse, Markdown, Value};
 
-#[derive(Serialize, Deserialize)]
-struct Product<'a> {
-    name: &'a str
+fn replace_prefix(
+    p: impl AsRef<Path>,
+    from: impl AsRef<Path>,
+    to: impl AsRef<Path>,
+) -> Result<PathBuf, StripPrefixError> {
+    p.as_ref().strip_prefix(from).map(|p| to.as_ref().join(p))
 }
 
 fn main() -> Result<()> {
-    println!("hello");
-    use tera::Context;
-
-    let mut context = Context::new();
-    context.insert("product", &Product{
-        name: "hello",
-    });
-    context.insert("vat_rate", &0.20);
-    println!("{}", TEMPLATES.render("./templates/blog/base.html", &context)?);
+    let tera = match Tera::new("templates/**/*") {
+        Ok(result) => result,
+        Err(err) => {
+            eprintln!("{}", err);
+            return Ok(());
+        }
+    };
+    let read_files = match read_all(&PathBuf::from("./posts/")) {
+        Ok(result) => result,
+        Err(err) => {
+            eprintln!("{}", err);
+            return Ok(());
+        }
+    };
+    for mut file in read_files {
+        let markdown: Markdown<HashMap<String, Value>> = match parse(&file.contents) {
+            Ok(result) => result,
+            Err(err) => {
+                eprintln!("{}", err);
+                return Ok(());
+            }
+        };
+        let mut context = Context::new();
+        context.insert("meta", &markdown.meta);
+        context.insert("content_html", &markdown.content_html);
+        let templated = match tera.render("blog/base.html", &context) {
+            Ok(result) => result,
+            Err(err) => {
+                eprintln!("{}", err);
+                return Ok(());
+            }
+        };
+        file.path.set_extension("html");
+        file.path = replace_prefix(&file.path, "./", "./.html_output/")?;
+        file.contents = templated;
+        file.write()?;
+        println!("Wrote: {:?}", file.path);
+    }
 
     Ok(())
 }
