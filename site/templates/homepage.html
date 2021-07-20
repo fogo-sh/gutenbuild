@@ -1,0 +1,18 @@
+
+{% extends "base.html" %}
+
+{% block title %}
+{{ blog.title }} - {{ meta.title }}
+{% endblock %}
+
+{% block header %}
+<header>
+    <div class="title">{{ blog.title }}</div>
+    <div class="links">
+        <a href="/blog/">blogposts</a>
+    </div>
+</header>
+{% endblock header %}
+
+{% block footer %}
+{% endblock footer %}

@@ -1,0 +1,12 @@
+{% block content %}
+<div class="post-list">
+    {% for document in documents %}
+    {% if document.meta.listed == true %}
+    <div class="post">
+        <h2><a href="{{ document.meta.slug }}">{{ document.meta.title }}</a></h2>
+        <p class="post-meta">{{ document.meta.created_date | date(format="%B %-d, %Y") }}</p>
+    </div>
+    {% endif %}
+    {% endfor %}
+</div>
+{% endblock %}
